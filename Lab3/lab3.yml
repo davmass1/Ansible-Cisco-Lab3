@@ -1,0 +1,40 @@
+---
+- name: Set switch1 SVI/VLAN interfaces for inter-vlan routing
+  hosts: switch1
+  gather_facts: false
+  tasks:
+    - name: Set SVIs
+      ios_l3_interfaces:
+        config:
+        - name: "{{ item.name }}"
+          ipv4:
+          - address: "{{ item.ip }}"
+        state: replaced
+      loop:
+        - { name: "vlan10", ip: "10.1.11.101/24"}
+        - { name: "vlan20", ip: "10.1.22.101/24"}
+        - { name: "vlan30", ip: "10.1.33.101/24"}
+    - name: Enable routing
+      ios_config:
+        lines:
+        - ip routing
+
+- name: Set switch2 SVI/VLAN interfaces for inter-vlan routing
+  hosts: switch2
+  gather_facts: false
+  tasks:
+    - name: Set SVIs
+      ios_l3_interfaces:
+        config:
+        - name: "{{ item.name }}"
+          ipv4:
+          - address: "{{ item.ip }}"
+        state: replaced
+      loop:
+        - { name: "vlan10", ip: "10.1.11.102/24"}
+        - { name: "vlan20", ip: "10.1.22.102/24"}
+        - { name: "vlan30", ip: "10.1.33.102/24"}
+    - name: Enable routing
+      ios_config:
+        lines:
+        - ip routing
